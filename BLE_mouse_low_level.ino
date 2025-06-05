@@ -149,7 +149,7 @@ void loop() {
 
     if (true) {
           Serial.println("Move mouse pointer up");
-          uint8_t msg[] = {  0x00, 0x00, 0xDF};
+          uint8_t msg[] = {  0x00, 0x00, 0xFF};
          
           inputMouse->setValue(msg,3);
           inputMouse->notify();
@@ -158,11 +158,11 @@ void loop() {
     delay(5000);
 
     Serial.println("Move mouse pointer down");
-          uint8_t msg2[] = {  0x00, 0x00, 0x20};
+          uint8_t msg2[] = {  0x00, 0x00, 0x01};
          
           inputMouse->setValue(msg2,3);
           inputMouse->notify();
-    delay(5000);
+    delay(50000);
     }
     else {
      while (digitalRead(button2Pin) ==  LOW ){ 
