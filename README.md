@@ -2,11 +2,12 @@
 
 ## Overview
 
-**BLE_MOUSE** is a Bluetooth Low Energy (BLE) mouse emulator designed to run on an ESP32-C3 microcontroller. The program configures the ESP32 to act as a BLE HID (Human Interface Device) mouse, allowing it to connect to a host device (e.g., a computer or tablet) and simulate mouse movements and button presses. The primary purpose is to provide automated mouse cursor movement to prevent screen locking on the host device, with optional manual control via physical buttons for scrolling.
+**BLE_MOUSE** is a Bluetooth Low Energy (BLE) mouse emulator designed to run on an ESP32 microcontroller. The program configures the ESP32 to act as a BLE HID (Human Interface Device) mouse, allowing it to connect to a host device (e.g., a computer or tablet) and simulate mouse movements and button presses. The primary purpose is to provide automated mouse cursor movement to prevent screen locking on the host device, with optional manual control via physical buttons for scrolling.
 
 ## Purpose
 
 The main objectives of the BLE_MOUSE project are:
+- **Coding example**: Provide an example of a BlueTooth mouse HID device, not using any external libraries
 - **Prevent Screen Lock**: Automatically moves the mouse cursor up and down at regular intervals to keep the host device active, preventing automatic screen locking or sleep mode.
 - **Manual Mouse Control**: Supports two physical pushbuttons to trigger mouse scrolling (up or down) when pressed, providing user-controlled interaction.
 - **BLE HID Emulation**: Emulates a standard USB mouse with a simplified 5-byte input report, supporting left, right, and middle button clicks, as well as X/Y cursor movement.
