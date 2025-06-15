@@ -5,7 +5,6 @@
 #include "BLEHIDDevice.h"
 #include "HIDTypes.h"
 #include "HIDKeyboardTypes.h"
-#include <driver/adc.h>
 #include "sdkconfig.h"
 
   
@@ -35,18 +34,18 @@ class MyCallbacks : public BLEServerCallbacks {
 void taskServer(void*){
 
 
-    BLEDevice::init("Flip-O-Matic");
-    BLEServer *pServer = BLEDevice::createServer();
-    pServer->setCallbacks(new MyCallbacks());
+  BLEDevice::init("Flip-O-Matic-C3");
+  BLEServer *pServer = BLEDevice::createServer();
+  pServer->setCallbacks(new MyCallbacks());
 
-    hid = new BLEHIDDevice(pServer);
-    inputMouse = hid->inputReport(1); // <-- input REPORTID from report map
+  hid = new BLEHIDDevice(pServer);
+  inputMouse = hid->inputReport(1); // <-- input REPORTID from report map
 
-    std::string name = "chegewara";
-    hid->manufacturer()->setValue(name.c_str());
+  std::string name = "chegewara";
+  hid->manufacturer()->setValue(name.c_str());
 
-    hid->pnp(0x02, 0xe502, 0xa111, 0x0210);
-    hid->hidInfo(0x00,0x02);
+  hid->pnp(0x02, 0xe502, 0xa111, 0x0210);
+  hid->hidInfo(0x00,0x02);
 
   BLESecurity *pSecurity = new BLESecurity();
 
@@ -109,18 +108,17 @@ USAGE_PAGE(1),       0x01,
       END_COLLECTION(0)
 };
 
-    hid->reportMap((uint8_t*)reportMapMouse, sizeof(reportMapMouse));
-    hid->startServices();
+  hid->reportMap((uint8_t*)reportMapMouse, sizeof(reportMapMouse));
+  hid->startServices();
 
-    BLEAdvertising *pAdvertising = pServer->getAdvertising();
-    pAdvertising->setAppearance(HID_MOUSE);
-    pAdvertising->addServiceUUID(hid->hidService()->getUUID());
-    pAdvertising->start();
-    hid->setBatteryLevel(7);
+  BLEAdvertising *pAdvertising = pServer->getAdvertising();
+  pAdvertising->setAppearance(HID_MOUSE);
+  pAdvertising->addServiceUUID(hid->hidService()->getUUID());
+  pAdvertising->start();
+  hid->setBatteryLevel(7);
 
-    ESP_LOGD(LOG_TAG, "Advertising started!");
-    delay(portMAX_DELAY);
-  
+  ESP_LOGD(LOG_TAG, "Advertising started!");
+  delay(portMAX_DELAY);
 };
 
 
@@ -133,7 +131,6 @@ void setup() {
   Serial.begin(115200);
   Serial.println("Starting BLE work!");
 
-  
   pinMode(button1Pin, INPUT_PULLUP);
   pinMode(button2Pin, INPUT_PULLUP);
   pinMode(ledPin, OUTPUT);
@@ -145,53 +142,44 @@ void loop() {
   
   if(connected){
 
-    //vTaskDelay(5000);Serial.println("dormindo");
+    if (true) { // default mode: keep moving to avoid screen lock
+      Serial.println("Move mouse pointer up");
+      uint8_t msg[] = {  0x00, 0x00, 0xFF};
+      
+      inputMouse->setValue(msg,3);
+      inputMouse->notify();
+      delay(10);
 
-    if (true) {
-          Serial.println("Move mouse pointer up");
-          uint8_t msg[] = {  0x00, 0x00, 0xFF};
-         
-          inputMouse->setValue(msg,3);
-          inputMouse->notify();
-          delay(10);
+      delay(5000);
 
-    delay(5000);
-
-    Serial.println("Move mouse pointer down");
-          uint8_t msg2[] = {  0x00, 0x00, 0x01};
-         
-          inputMouse->setValue(msg2,3);
-          inputMouse->notify();
-    delay(50000);
-    }
-    else {
-     while (digitalRead(button2Pin) ==  LOW ){ 
-
-          Serial.println("mouse Scroll DOWN");
-          //<button>, <x>, <y>, <wheel>
-         
-          uint8_t msg[] = {  0x00, 0x00, 0xA0};
-         
-          inputMouse->setValue(msg,3);
-          inputMouse->notify();
-          delay(10);
-
+      Serial.println("Move mouse pointer down");
+            uint8_t msg2[] = {  0x00, 0x00, 0x01};
           
-          
-     }
-    
-    while (digitalRead(button1Pin) ==  LOW ){ 
-
-          Serial.println("mouse Scroll UP");
-          //<button>, <x>, <y>, <wheel>
-         
-          uint8_t msg[] = {  0x00, 0x00, 0x01};
-         
-          inputMouse->setValue(msg,3);
-          inputMouse->notify();
-          delay(10);
-
-     }
+      inputMouse->setValue(msg2,3);
+      inputMouse->notify();
+      delay(50000);
+    } else { // down or up at the press of a button
+      
+      while (digitalRead(button2Pin) ==  LOW ){ 
+        Serial.println("mouse Scroll DOWN");
+        //<button>, <x>, <y>, <wheel>
+        
+        uint8_t msg[] = {  0x00, 0x00, 0xA0};
+        
+        inputMouse->setValue(msg,3);
+        inputMouse->notify();
+        delay(10);
+      }
+      while (digitalRead(button1Pin) ==  LOW ){ 
+        Serial.println("mouse Scroll UP");
+        //<button>, <x>, <y>, <wheel>
+      
+        uint8_t msg[] = {  0x00, 0x00, 0x01};
+      
+        inputMouse->setValue(msg,3);
+        inputMouse->notify();
+        delay(10);
+      }
     }
     
   }
